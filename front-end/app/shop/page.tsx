@@ -109,13 +109,13 @@ const filteredProducts = products.filter((p) => {
   </select>
 
   {/* PRICE */}
-  <input
-    type="range"
-    min="0"
-    max="1000"
-    value={maxPrice}
-    onChange={(e) => setMaxPrice(Number(e.target.value))}
-  />
+ <input
+  type="text"
+  placeholder="Search products..."
+  className="w-full p-3 rounded-xl bg-gray-900 border border-gray-700 text-white outline-none focus:border-green-500"
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+/>
 </div>
 
 <p className="text-gray-400 mb-4">
