@@ -1,0 +1,22 @@
+import "./globals.css";
+import Navbar from "@/components/layout/Navbar";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        {/* 🔥 NAVBAR GLOBAL */}
+        <Navbar />
+
+        {/* PAGE CONTENT */}
+        <main className="min-h-screen">
+          {children}
+        </main>
+      </body>
+    </html>
+  );
+}
