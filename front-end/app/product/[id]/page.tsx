@@ -27,23 +27,94 @@ export default function ProductPage() {
   const [qty, setQty] = useState(1);
   const [size, setSize] = useState("");
   const [color, setColor] = useState("");
+  const [activeImage, setActiveImage] =
+  useState("");
+  //product featured //
+    const featured = [
+    {
+      name: "Gym Shirt",
+      price: 99,
+      image: "t-shirt.webp",
+    },
+    {
+      name: "Hoodie",
+      price: 129,
+      image: "capuche.webp",
+    },
+    {
+      name: "Shorts",
+      price: 69,
+      image: "short-jaune.webp",
+    },
+    {
+      name: "Shoes",
+      price: 149,
+      image: "sport-shoes.webp",
+    },
+  ];
 
-  useEffect(() => {
-    const fetchProduct = async () => {
+  //product featured //
+useEffect(() => {
+
+  const featuredProduct =
+    featured[Number(id)];
+
+  // FEATURED PRODUCT
+  if (featuredProduct) {
+
+    setProduct({
+      _id: String(id),
+      name: featuredProduct.name,
+      price: featuredProduct.price,
+      image: featuredProduct.image,
+      description:
+        "Premium gym clothing for athletes.",
+      category: "clothing",
+      brand: "Gym Store",
+      stock: 20,
+      rating: 5,
+      sizes: ["S", "M", "L", "XL"],
+      colors: ["black", "white", "red"],
+    });
+
+    setSize("M");
+    setColor("black");
+     //thumbnail//
+setActiveImage(featuredProduct.image);
+ //thumbnail//
+    return;
+  }
+  //falavor//
+  
+
+  // MONGODB PRODUCT
+  const fetchProduct = async () => {
+
+    try {
+
       const res = await fetch(
         `http://localhost:3001/api/products/${id}`
       );
 
       const data = await res.json();
-      setProduct(data);
 
+      setProduct(data);
+      //thumbnail//
+setActiveImage(data.image);
+ //thumbnail//
       setSize(data.sizes?.[0] || "");
       setColor(data.colors?.[0] || "");
-    };
 
-    fetchProduct();
-  }, [id]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
+  fetchProduct();
+
+}, [id]);
+//flavor//
+ 
   const addToCart = async () => {
     if (!product) return;
 
@@ -75,7 +146,12 @@ export default function ProductPage() {
   product?.colors?.length
     ? product.colors
     : ["red", "yellow", "blue", "black","white"];
-
+const tshirtImages = [
+  "t-shirt-1.webp",
+  "t-shirt-2.webp",
+  "t-shirt-3.webp",
+  "t-shirt-4.webp",
+];
   if (!product) {
     return (
       <div className="min-h-screen bg-black text-white flex justify-center items-center">
@@ -102,21 +178,36 @@ sizes="(max-width: 768px) 100vw, 50vw"
           </div>
 
           {/* thumbnails */}
-         <div className="grid grid-cols-4 gap-3 mt-4">
-  {["shorts.jpg", "hoodie.jpg", "short-2.jpg", "hero.jpg"].map((item) => (
-    <div
+          {product.category !== "supplement" && (
+    <div className="grid grid-cols-4 gap-3 mt-4">
+
+  {tshirtImages.map((item) => (
+
+    <button
       key={item}
-      className="relative h-24 bg-gray-900 rounded-xl overflow-hidden"
+      onClick={() => setActiveImage(item)}
+      className={`
+        relative h-24 rounded-xl overflow-hidden border
+        ${activeImage === item
+          ? "border-green-500"
+          : "border-gray-700"}
+        }
+      `}
     >
+
       <Image
         src={`/images/${item}`}
         alt={item}
         fill
-              className="object-cover"
+        className="object-cover hover:scale-105 transition"
       />
-    </div>
+
+    </button>
+
   ))}
+
 </div>
+)}
         </div>
 
         {/* INFO */}
@@ -207,8 +298,19 @@ sizes="(max-width: 768px) 100vw, 50vw"
       <option key={d} value={d}>
         {d}
       </option>
-    ))}
+          ))}
   </select>
+  {/* SUPPLEMENT */}
+{product.category === "supplement" && (
+  <>
+    <p>Type</p>
+    <select>
+      <option>Protein</option>
+      <option>Vitamin</option>
+      <option>Minerals</option>
+    </select>
+  </>
+)}
           </div>
 
           {/* quantity */}

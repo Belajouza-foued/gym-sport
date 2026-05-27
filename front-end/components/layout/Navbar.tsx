@@ -35,6 +35,40 @@ export default function Navbar() {
           <Link className="hover:text-green-400 transition" href="/dashboard">
             Dashboard
           </Link>
+          
+         <div className="relative group">
+
+  {/* BUTTON */}
+  <button className="text-white px-6 py-3 rounded-lg  transition">
+    Gender
+  </button>
+
+  {/* DROPDOWN */}
+  <div className="absolute hidden group-hover:flex flex-col bg-gray-900 border border-gray-700 rounded-lg mt-2 w-40 z-50">
+
+    <Link
+      href="/products"
+      className="px-4 py-3 hover:bg-gray-800 transition"
+    >
+      Men
+    </Link>
+
+    <Link
+      href="/products"
+      className="px-4 py-3 hover:bg-gray-800 transition"
+    >
+      Women
+    </Link>
+
+    <Link
+      href="/products"
+      className="px-4 py-3 hover:bg-gray-800 transition"
+    >
+      Kids
+    </Link>
+
+  </div>
+</div>
         </nav>
 
         {/* RIGHT ICONS */}

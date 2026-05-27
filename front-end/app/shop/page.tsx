@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-
+import type { NextConfig } from "next";
 type Product = {
   _id: string;
   name: string;
@@ -14,11 +14,23 @@ type Product = {
 
 export default function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [searchName, setSearchName] = useState("");
   const [loading, setLoading] = useState(true);
 const [search, setSearch] = useState("");
 const [category, setCategory] = useState("all");
 const [maxPrice, setMaxPrice] = useState(1000);
 const router = useRouter();
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "contents.mediadecathlon.com",
+      },
+    ],
+  },
+};
+
 
   const addToCart = async (product: Product) => {
   try {
@@ -63,10 +75,11 @@ const router = useRouter();
 
     fetchProducts();
   }, []);
+//search//
 const filteredProducts = products.filter((p) => {
   return (
-    p.name.toLowerCase().includes(search.toLowerCase()) &&
-    (category === "all" || p.category === category) &&
+    p.name.toLowerCase().includes(searchName.toLowerCase()) &&
+        (category === "all" || p.category === category) &&
     p.price <= maxPrice
   );
 });
@@ -87,14 +100,14 @@ const filteredProducts = products.filter((p) => {
           {/* searchbar */}
           <div className="mb-6 grid md:grid-cols-3 gap-4">
 
-  {/* SEARCH */}
+  {/* SEARCH by name */}
   <input
-    type="text"
-    placeholder="Search products..."
-    className="p-2 rounded bg-gray-900 text-white"
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-  />
+  type="text"
+  placeholder="Search by name..."
+  value={searchName}
+  onChange={(e) => setSearchName(e.target.value)}
+  className="p-2 rounded bg-gray-900 text-white"
+/>
 
   {/* CATEGORY */}
   <select
@@ -103,19 +116,24 @@ const filteredProducts = products.filter((p) => {
     onChange={(e) => setCategory(e.target.value)}
   >
     <option value="all">All</option>
-    <option value="fitness">Fitness</option>
-    <option value="shirt">Shirts</option>
-    <option value="supplement">Supplements</option>
+    <option value="clothing">👕 Clothing</option>
+    <option value="accessory">🧢 Accessory</option>
+    <option value="supplement">💊 Supplement</option>
   </select>
 
   {/* PRICE */}
  <input
-  type="text"
-  placeholder="Search products..."
-  className="w-full p-3 rounded-xl bg-gray-900 border border-gray-700 text-white outline-none focus:border-green-500"
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
+  type="range"
+  min="0"
+  max="1000"
+  value={maxPrice}
+  onChange={(e) => setMaxPrice(Number(e.target.value))}
+  className="w-full"
 />
+
+<p className="text-gray-400">
+  Max Price: ${maxPrice}
+</p>
 </div>
 
 <p className="text-gray-400 mb-4">
@@ -166,7 +184,7 @@ const filteredProducts = products.filter((p) => {
           </div>
         ))}
 
-      </div>
+      </div>      
     </div>
   );
 }
