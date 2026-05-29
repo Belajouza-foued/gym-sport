@@ -10,65 +10,52 @@ type Product = {
   price: number;
   stock: number;
   image: string;
+  category: string;
 };
 
 export default function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  // 🔥 fetch products
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch("http://localhost:3001/api/products");
-        const data = await res.json();
-        setProducts(data);
-      } catch (err) {
-        console.log("Error fetching products", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
+    fetch("http://localhost:3001/api/products")
+      .then((res) => res.json())
+      .then(setProducts);
   }, []);
 
-  // 🔥 DELETE product
   const deleteProduct = async (id: string) => {
-    try {
-      await fetch(`http://localhost:3001/api/products/${id}`, {
-        method: "DELETE",
-      });
+    await fetch(`http://localhost:3001/api/products/${id}`, {
+      method: "DELETE",
+    });
 
-      // remove from UI instantly
-      setProducts((prev) => prev.filter((p) => p._id !== id));
-    } catch (err) {
-      console.log("Delete error", err);
-    }
+    setProducts((prev) => prev.filter((p) => p._id !== id));
   };
 
-  if (loading) {
-    return (
-      <div className="p-10 bg-black text-white min-h-screen">
-        Loading products...
-      </div>
-    );
-  }
-
   return (
-    <div className="p-10 bg-black text-white min-h-screen">
+    <div className="min-h-screen bg-black text-white p-10">
 
-      <h1 className="text-3xl font-bold mb-8 text-green-500">
-        Admin Products
-      </h1>
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-8">
 
+        <h1 className="text-3xl font-bold text-green-500">
+          Admin Products
+        </h1>
+
+        <Link href="/admin/products/create">
+          <button className="bg-green-500 text-black px-4 py-2 rounded">
+            + Add Product
+          </button>
+        </Link>
+
+      </div>
+
+      {/* GRID */}
       <div className="grid gap-4">
 
         {products.map((p) => (
 
           <div
             key={p._id}
-            className="bg-gray-900 p-4 rounded-xl flex items-center gap-4 hover:bg-gray-800 transition"
+            className="bg-gray-900 p-4 rounded-xl flex items-center gap-4"
           >
 
             {/* IMAGE */}
@@ -83,26 +70,25 @@ export default function AdminProducts() {
 
             {/* INFO */}
             <div className="flex-1">
-              <h2 className="font-bold text-lg">{p.name}</h2>
-
+              <h2 className="font-bold">{p.name}</h2>
               <p className="text-green-400">${p.price}</p>
-
               <p className="text-gray-400 text-sm">
                 Stock: {p.stock}
+              </p>
+              <p className="text-gray-500 text-xs">
+                {p.category}
               </p>
             </div>
 
             {/* ACTIONS */}
             <div className="flex gap-2">
 
-              {/* EDIT */}
               <Link href={`/admin/edit/${p._id}`}>
                 <button className="bg-yellow-500 text-black px-3 py-1 rounded">
                   Edit
                 </button>
               </Link>
 
-              {/* DELETE */}
               <button
                 onClick={() => deleteProduct(p._id)}
                 className="bg-red-500 px-3 py-1 rounded"

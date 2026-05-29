@@ -2,12 +2,22 @@
 
 import Link from "next/link";
 import { Menu, ShoppingCart, User, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const cartCount = 2; // 🔥 plus tard vient du store
+  const [cartCount, setCartCount] = useState(0);
+useEffect(() => {
 
+  fetch("http://localhost:3001/api/cart/123")
+    .then((res) => res.json())
+    .then((data) => {
+
+      setCartCount(data.items.length);
+
+    });
+
+}, []);
   return (
     <header className="sticky top-0 z-50 bg-black/90 backdrop-blur border-b border-gray-800">
       
@@ -32,7 +42,7 @@ export default function Navbar() {
           <Link className="hover:text-green-400 transition" href="/orders">
             Orders
           </Link>
-          <Link className="hover:text-green-400 transition" href="/dashboard">
+          <Link className="hover:text-green-400 transition" href="/admin">
             Dashboard
           </Link>
           
@@ -74,23 +84,50 @@ export default function Navbar() {
         {/* RIGHT ICONS */}
         <div className="hidden md:flex items-center gap-6">
 
-          {/* CART */}
-          <Link href="/cart" className="relative text-green-400 transition">
-            <ShoppingCart size={22} />
+      {/* CART */}
+      <Link
+        href="/cart"
+        className="relative text-green-400 transition"
+      >
 
-            {/* badge */}
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-green-500 text-black text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
-                {cartCount}
-              </span>
-            )}
-          </Link>
+        <ShoppingCart size={22} />
 
-          {/* USER */}
-          <Link href="/login" className="hover:text-green-400 transition">
-            <User size={22} />
-          </Link>
-        </div>
+        {/* BADGE */}
+        {cartCount > 0 && (
+
+          <span
+            className="
+              absolute
+              -top-2
+              -right-2
+              bg-green-500
+              text-black
+              text-xs
+              w-5
+              h-5
+              flex
+              items-center
+              justify-center
+              rounded-full
+              font-bold
+            "
+          >
+            {cartCount}
+          </span>
+
+        )}
+
+      </Link>
+
+      {/* USER */}
+      <Link
+        href="/login"
+        className="hover:text-green-400 transition"
+      >
+        <User className="text-gray-200 rounded-full" size={22} />
+      </Link>
+
+    </div>
 
         {/* MOBILE BUTTON */}
         <button
