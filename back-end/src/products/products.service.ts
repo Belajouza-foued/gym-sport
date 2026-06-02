@@ -1,15 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-
 import { Product, ProductDocument } from './schema/product.schema';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectModel(Product.name)
-    private productModel: Model<ProductDocument>,
-  ) {}
+    private productModel: Model<ProductDocument>      
+    ) {}
 async addStock(id: string, qty: number) {
   return this.productModel.findByIdAndUpdate(
     id,
@@ -39,7 +38,10 @@ async addStock(id: string, qty: number) {
 
     return product;
   }
-
+//delete//
+async removeAll() {
+  return this.productModel.deleteMany({});
+}
   // UPDATE
   async update(id: string, dto: any) {
     const product = await this.productModel.findByIdAndUpdate(
@@ -54,6 +56,10 @@ async addStock(id: string, qty: number) {
 
     return product;
   }
+//gender//
+findByGender(gender: string) {
+  return this.productModel.find({ gender });
+}
 
   // DELETE
   async remove(id: string) {

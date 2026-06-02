@@ -1,122 +1,128 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 
 type Product = {
-  _id: string;
-  name: string;
+    name: string;
   price: number;
   stock: number;
   image: string;
+  category: string;
 };
 
-export default function AdminProducts() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function EditProductPage() {
+  const { id } = useParams();
+  const router = useRouter();
 
-  // 🔥 fetch products
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch("http://localhost:3001/api/products");
-        const data = await res.json();
-        setProducts(data);
-      } catch (err) {
-        console.log("Error fetching products", err);
-      } finally {
-        setLoading(false);
+  const [product, setProduct] = useState<Product | null>(null);
+
+  // GET PRODUCT BY ID
+useEffect(() => {
+  if (!id) return;
+
+  fetch(`http://localhost:3001/api/products/${id}`)
+    .then((res) => res.json())
+    .then((data) => setProduct(data));
+}, [id]);
+
+  // UPDATE PRODUCT
+const updateProduct = async () => {
+  try {
+    const res = await fetch(
+      `http://localhost:3001/api/products/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(product),
       }
-    };
+    );
 
-    fetchProducts();
-  }, []);
-
-  // 🔥 DELETE product
-  const deleteProduct = async (id: string) => {
-    try {
-      await fetch(`http://localhost:3001/api/products/${id}`, {
-        method: "DELETE",
-      });
-
-      // remove from UI instantly
-      setProducts((prev) => prev.filter((p) => p._id !== id));
-    } catch (err) {
-      console.log("Delete error", err);
+    if (!res.ok) {
+      alert("Update failed ❌");
+      return;
     }
-  };
 
-  if (loading) {
+    alert("Product updated ✅");
+    router.push("/admin/products");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+  if (!product) {
     return (
-      <div className="p-10 bg-black text-white min-h-screen">
-        Loading products...
+      <div className="text-white p-10">
+        Loading...
       </div>
     );
   }
 
   return (
-    <div className="p-10 bg-black text-white min-h-screen">
+    <div className="min-h-screen bg-black flex items-center flex-col justify-center text-white p-10">
 
-      <h1 className="text-3xl font-bold mb-8 text-green-500">
-        Admin Products
+      <h1 className="text-3xl font-bold  text-green-500 mb-6 ">
+        Edit Product
       </h1>
 
-      <div className="grid gap-4">
+      {/* NAME */}
+      <input
+        className="block w-full p-2 mb-3 max-w-2xl text-white border border-white"
+        value={product.name}
+        onChange={(e) =>
+          setProduct({ ...product, name: e.target.value })
+        }
+      />
 
-        {products.map((p) => (
+      {/* PRICE */}
+      <input
+        type="number"
+        className="block w-full p-2 mb-3 text-white max-w-2xl border border-white"
+        value={product.price}
+        onChange={(e) =>
+          setProduct({
+            ...product,
+            price: Number(e.target.value),
+          })
+        }
+      />
 
-          <div
-            key={p._id}
-            className="bg-gray-900 p-4 rounded-xl flex items-center gap-4 hover:bg-gray-800 transition"
-          >
+      {/* STOCK */}
+      <input
+        type="number"
+        className="block w-full p-2 mb-3 text-white max-w-2xl border border-white"
+        value={product.stock}
+        onChange={(e) =>
+          setProduct({
+            ...product,
+            stock: Number(e.target.value),
+          })
+        }
+      />
 
-            {/* IMAGE */}
-            <div className="relative w-20 h-20">
-              <Image
-                src={`/images/${p.image}`}
-                alt={p.name}
-                fill
-                className="object-cover rounded"
-              />
-            </div>
+      {/* CATEGORY */}
+      <input
+        className="block w-full p-2 mb-3 text-white max-w-2xl border border-white"
+        value={product.category}
+        onChange={(e) =>
+          setProduct({
+            ...product,
+            category: e.target.value,
+          })
+        }
+      />
 
-            {/* INFO */}
-            <div className="flex-1">
-              <h2 className="font-bold text-lg">{p.name}</h2>
+      {/* SAVE */}
+      <button
+        onClick={updateProduct}
+        className="bg-green-500 text-black px-6 py-2 rounded"
+      >
+        Save Changes
+      </button>
 
-              <p className="text-green-400">${p.price}</p>
-
-              <p className="text-gray-400 text-sm">
-                Stock: {p.stock}
-              </p>
-            </div>
-
-            {/* ACTIONS */}
-            <div className="flex gap-2">
-
-              {/* EDIT */}
-              <Link href={`/admin/edit/${p._id}`}>
-                <button className="bg-yellow-500 text-black px-3 py-1 rounded">
-                  Edit
-                </button>
-              </Link>
-
-              {/* DELETE */}
-              <button
-                onClick={() => deleteProduct(p._id)}
-                className="bg-red-500 px-3 py-1 rounded"
-              >
-                Delete
-              </button>
-
-            </div>
-
-          </div>
-
-        ))}
-
-      </div>
     </div>
   );
 }

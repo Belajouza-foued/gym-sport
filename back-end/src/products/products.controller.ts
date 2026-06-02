@@ -55,6 +55,13 @@ export class ProductsController {
   ) {
     return this.productsService.update(id, dto);
   }
+   //filter gender//
+@Get('gender/:gender')
+findByGender(
+  @Param('gender') gender: string,
+) {
+  return this.productsService.findByGender(gender);
+}
 
   // DELETE
   @Delete(':id')
@@ -63,4 +70,4 @@ export class ProductsController {
   remove(@Param('id') id: string) {
     return this.productsService.remove(id);
   }
-}
+ }

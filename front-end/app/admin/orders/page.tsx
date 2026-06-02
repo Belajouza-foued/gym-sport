@@ -21,14 +21,11 @@ type Order = {
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const userId = "123"; // temporaire
-
   const fetchOrders = async () => {
     try {
-      const res = await fetch(
-        `http://localhost:3001/api/orders/${userId}`
-      );
+     const res = await fetch(
+  "http://localhost:3001/api/admin/orders"
+);
 
       const data = await res.json();
       setOrders(data);

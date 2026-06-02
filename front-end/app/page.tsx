@@ -114,6 +114,7 @@ export default function HomePage() {
             src="/images/hero.jpg"
             alt="Hero"
             fill
+             sizes="100vw"
             className="object-cover absolute"
           />
 

@@ -15,6 +15,12 @@ export class Product {
 
   @Prop({ required: true })
   category: string;
+  
+  @Prop({
+  enum: ["men", "women", "kids"],
+  required: true,
+})
+gender: string;
 
   @Prop({ required: true })
   image: string;

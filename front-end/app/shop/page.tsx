@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import type { NextConfig } from "next";
 type Product = {
@@ -10,6 +11,7 @@ type Product = {
   price: number;
   image: string;
   category: string;
+  gender: string; // ✅ ADD THIS
 };
 
 export default function ShopPage() {
@@ -17,9 +19,11 @@ export default function ShopPage() {
   const [searchName, setSearchName] = useState("");
   const [loading, setLoading] = useState(true);
 const [search, setSearch] = useState("");
+const [gender, setGender] = useState("all");
 const [category, setCategory] = useState("all");
 const [maxPrice, setMaxPrice] = useState(1000);
 const router = useRouter();
+const searchParams = useSearchParams();
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -30,6 +34,8 @@ const nextConfig: NextConfig = {
     ],
   },
 };
+const minPrice = [10]
+  
 
 
   const addToCart = async (product: Product) => {
@@ -58,6 +64,7 @@ const nextConfig: NextConfig = {
     alert("Error adding product ❌");
   }
 };
+const urlGender = searchParams.get("gender");
 
   // 🔥 fetch backend
   useEffect(() => {
@@ -79,12 +86,13 @@ const nextConfig: NextConfig = {
 const filteredProducts = products.filter((p) => {
   return (
     p.name.toLowerCase().includes(searchName.toLowerCase()) &&
-        (category === "all" || p.category === category) &&
+    (category === "all" || p.category === category) &&
+    (!urlGender || p.gender === urlGender) &&
     p.price <= maxPrice
   );
 });
   if (loading) {
-    return (
+      return (
       <div className="text-white text-center mt-20">
         Loading products...
       </div>
@@ -122,24 +130,23 @@ const filteredProducts = products.filter((p) => {
   </select>
 
   {/* PRICE */}
+  <div className="flex justify-center items-center gap-4">
+  <p className="text-gray-400">
+  Min: ${minPrice}
+</p>
  <input
   type="range"
   min="0"
   max="1000"
   value={maxPrice}
   onChange={(e) => setMaxPrice(Number(e.target.value))}
-  className="w-full"
+  className="w-full max-w-[250px]"
 />
-
 <p className="text-gray-400">
-  Max Price: ${maxPrice}
+  Max: ${maxPrice}
 </p>
 </div>
-
-<p className="text-gray-400 mb-4">
-  Max Price: ${maxPrice}
-</p>
-
+</div>
       {/* GRID */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
@@ -177,7 +184,7 @@ const filteredProducts = products.filter((p) => {
   onClick={() => router.push(`/product/${product._id}`)}
   className="mt-4 w-full bg-green-500 text-black py-2 rounded hover:bg-green-400"
 >
-  Add to Cart
+  view product
 </button>
 
 
