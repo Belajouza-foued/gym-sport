@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
 type Stats = {
   products: number;
   users: number;
@@ -16,7 +23,12 @@ export default function StatsPage() {
   });
 
   const [loading, setLoading] = useState(true);
-
+const data = [
+  { month: "Jan", sales: 400 },
+  { month: "Feb", sales: 700 },
+  { month: "Mar", sales: 500 },
+  { month: "Apr", sales: 900 },
+];
   useEffect(() => {
     fetch("http://localhost:3001/api/admin/stats")
       .then((res) => res.json())
@@ -76,6 +88,15 @@ export default function StatsPage() {
           </p>
         </div>
       </div>
+      <div className="flex justify-center items-center pt-10">
+       <LineChart width={600} height={300} data={data}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="month" />
+      <YAxis />
+      <Tooltip />
+      <Line type="monotone" dataKey="sales" />
+    </LineChart>
+    </div>
     </div>
   );
 }

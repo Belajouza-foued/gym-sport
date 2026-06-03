@@ -153,7 +153,7 @@ const checkout = async () => {
         </h2>
 
        <button
-  onClick={checkout}
+         onClick={checkout}
   className="mt-4 bg-green-500 text-black px-6 py-3 rounded font-bold hover:bg-green-400"
 >
   Checkout
