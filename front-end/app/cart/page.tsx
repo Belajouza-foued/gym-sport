@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { useEffect, useState } from "react";
 
@@ -20,42 +21,7 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true);
 
   const userId = "123"; // temporaire
-const checkout = async () => {
-  try {
-    if (!cart || cart.items.length === 0) return;
 
-    const res = await fetch(
-      "http://localhost:3001/api/orders",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: cart.userId,
-          items: cart.items,
-        }),
-      }
-    );
-
-    const data = await res.json();
-
-    console.log("Order created:", data);
-
-    alert("Order placed successfully ✅");
-
-    // 🔥 vider cart frontend
-    setCart({
-      userId: cart.userId,
-      items: [],
-      totalPrice: 0,
-    });
-
-  } catch (error) {
-    console.log(error);
-    alert("Checkout failed ❌");
-  }
-};
   // 🔥 load cart
   const fetchCart = async () => {
     try {
@@ -151,15 +117,13 @@ const checkout = async () => {
         <h2 className="text-2xl font-bold">
           Total: ${cart.totalPrice}
         </h2>
-
-       <button
-         onClick={checkout}
-  className="mt-4 bg-green-500 text-black px-6 py-3 rounded font-bold hover:bg-green-400"
+      </div>
+<Link
+  href="/checkout"
+  className="mt-4 bg-green-500 text-white px-10 py-3 rounded font-bold hover:bg-green-600 transition"
 >
   Checkout
-</button>
-      </div>
-
+</Link>
     </div>
   );
 }

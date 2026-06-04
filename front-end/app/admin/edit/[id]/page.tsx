@@ -114,7 +114,6 @@ const updateProduct = async () => {
           })
         }
       />
-
       {/* SAVE */}
       <button
         onClick={updateProduct}

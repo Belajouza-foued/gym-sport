@@ -2,9 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
 import Image from "next/image";
-import type { NextConfig } from "next";
 type Product = {
   _id: string;
   name: string;
@@ -17,25 +15,12 @@ type Product = {
 export default function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [searchName, setSearchName] = useState("");
+  const [urlGender, setUrlGender] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-const [search, setSearch] = useState("");
-const [gender, setGender] = useState("all");
 const [category, setCategory] = useState("all");
 const [maxPrice, setMaxPrice] = useState(1000);
 const router = useRouter();
-const searchParams = useSearchParams();
-const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "contents.mediadecathlon.com",
-      },
-    ],
-  },
-};
 const minPrice = [10]
-  
 
 
   const addToCart = async (product: Product) => {
@@ -64,8 +49,10 @@ const minPrice = [10]
     alert("Error adding product ❌");
   }
 };
-const urlGender = searchParams.get("gender");
-
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  setUrlGender(params.get("gender"));
+}, []);
   // 🔥 fetch backend
   useEffect(() => {
     const fetchProducts = async () => {
@@ -155,13 +142,13 @@ const filteredProducts = products.filter((p) => {
             key={product._id}
             className="bg-gray-900 rounded-xl p-4 hover:scale-105 transition"
           >
-             <Link href={`/product/${product._id}`}></Link>
-            {/* IMAGE */}
+                         {/* IMAGE */}
             <div className="relative h-80 bg-gray-800 rounded mb-4 flex items-center justify-center">
                                   <Image
                         src={`/images/${product.image}`}
                         alt={product.name}
                            fill
+                           sizes="(max-width: 768px) 100vw, 33vw"
                         className="object-cover  absolute w-full"
                       />
                         </div>
