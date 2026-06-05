@@ -121,13 +121,19 @@ useEffect(() => {
 
       {/* MOBILE MENU */}
       {open && (
-        <div className="md:hidden bg-black border-t border-gray-800 px-6 py-4 space-y-4 text-sm">
-          <Link href="/">Home</Link>
-          <Link href="/shop">Shop</Link>
-          <Link href="/orders">Orders</Link>
-          <Link href="/dashboard">Dashboard</Link>
-          <Link href="/cart">Cart</Link>
-          <Link href="/login">Login</Link>
+        <div className="md:hidden border-t border-gray-800 px-6 py-4 space-y-4 space-x-4 text-sm">
+          <Link href="/" className="text-gray-200">Home</Link>
+          <Link href="/shop" className="text-gray-200">Shop</Link>
+<Link href="/shop?gender=men" className="text-gray-200">
+  Men
+</Link>
+<Link href="/shop?gender=women" className="text-gray-200">
+  Women
+</Link>
+<Link href="/shop?gender=kids" className="text-gray-200">
+  Kids
+</Link>
+          <Link href="/login" className="text-gray-200">Login</Link>
         </div>
       )}
     </header>
